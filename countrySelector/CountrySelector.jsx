@@ -1,7 +1,6 @@
 import { Accordion, Form, Grid, Icon, Input, Menu } from "semantic-ui-react";
 import React, { useEffect, useRef, useState } from "react";
-import { SELECTED_COUNTRY } from "../commomConstants";
-
+import { SELECTED_COUNTRY } from "../commonConstants";
 
 const CountrySelector = ({
                              countries,
@@ -11,6 +10,7 @@ const CountrySelector = ({
                              addYear,
                              selectedCountryLabel,
                              countryColumns,
+                             intl,
                              isShowSelector,
                              selectedCountryPostLabel
                          }) => {
