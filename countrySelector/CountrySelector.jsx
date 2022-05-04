@@ -12,7 +12,8 @@ const CountrySelector = ({
                              countryColumns,
                              intl,
                              isShowSelector,
-                             selectedCountryPostLabel
+                             selectedCountryPostLabel,
+                             setIsFilterOpen
                          }) => {
     const [activeIndex, setActiveIndex] = useState([0]);
     const [searchKeyword, setSearchKeyword] = useState(undefined);
@@ -21,6 +22,7 @@ const CountrySelector = ({
         const hoverOutside = (event) => {
             if (ref.current && !ref.current.contains(event.target)) {
                 setActiveIndex(-1);
+                setIsFilterOpen(false);
             }
         };
         document.addEventListener('mouseout', hoverOutside, true);
@@ -31,6 +33,7 @@ const CountrySelector = ({
     const handleSelectedCountry = (event, { value }) => {
         setActiveIndex(undefined);
         setSearchKeyword(undefined);
+        setIsFilterOpen(false);
         onApply(SELECTED_COUNTRY, value);
     }
     const getSelectedCountry = () => {
@@ -90,6 +93,7 @@ const CountrySelector = ({
     const handleClick = (e, titleProps) => {
         const { index } = titleProps
         setActiveIndex(activeIndex === index ? -1 : index);
+        setIsFilterOpen(true);
     }
     const getSelectedCountryGrids = () => {
         const grids = [];
@@ -104,7 +108,7 @@ const CountrySelector = ({
                             index={0}
                             onClick={handleClick}
                         />
-                        <Accordion.Content active={activeIndex === 0} content={CountryForm} />
+                        <Accordion.Content active={activeIndex === 0} content={CountryForm}/>
                     </Menu.Item>
                 </Accordion>
             </Grid.Column>);
