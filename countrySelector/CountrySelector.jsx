@@ -22,7 +22,9 @@ const CountrySelector = ({
         const hoverOutside = (event) => {
             if (ref.current && !ref.current.contains(event.target)) {
                 setActiveIndex(-1);
-                setIsFilterOpen(false);
+                if (setIsFilterOpen) {
+                    setIsFilterOpen(false);
+                }
             }
         };
         document.addEventListener('mouseout', hoverOutside, true);
@@ -33,7 +35,9 @@ const CountrySelector = ({
     const handleSelectedCountry = (event, { value }) => {
         setActiveIndex(undefined);
         setSearchKeyword(undefined);
-        setIsFilterOpen(false);
+        if (setIsFilterOpen) {
+            setIsFilterOpen(false);
+        }
         onApply(SELECTED_COUNTRY, value);
     }
     const getSelectedCountry = () => {
@@ -93,7 +97,9 @@ const CountrySelector = ({
     const handleClick = (e, titleProps) => {
         const { index } = titleProps
         setActiveIndex(activeIndex === index ? -1 : index);
-        setIsFilterOpen(true);
+        if (setIsFilterOpen) {
+            setIsFilterOpen(true);
+        }
     }
     const getSelectedCountryGrids = () => {
         const grids = [];
