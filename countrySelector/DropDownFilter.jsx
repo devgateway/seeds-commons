@@ -30,7 +30,6 @@ const DropDownFilter = ({
     const handleSearch = (event, { value }) => {
         setSearchKeyword(value);
     }
-    const style = { border: '1px solid purple' }
     const handleSelected = (event, { value }) => {
         setActiveIndex(undefined);
         setSearchKeyword(undefined);
@@ -88,7 +87,7 @@ const DropDownFilter = ({
         }
     }
     return (
-        <div ref={ref} style={style} id={divId}><Grid.Column width={selectedCountryFirst ? 8 / divider : 10} key={1}>
+        <div ref={ref} id={divId}><Grid.Column width={selectedCountryFirst ? 8 / divider : 10} key={1}>
             <Accordion as={Menu} vertical className={!selectedCountryFirst ? 'narrow' : ''}>
                 <Menu.Item>
                     <Accordion.Title
