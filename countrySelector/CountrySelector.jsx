@@ -1,6 +1,7 @@
 import { Accordion, Form, Grid, Icon, Input, Menu } from "semantic-ui-react";
 import React, { useEffect, useRef, useState } from "react";
-import { SELECTED_COUNTRY } from "../commonConstants";
+import { SELECTED_COUNTRY, SELECTED_INDICATOR } from "../commonConstants";
+import DropDownFilter from "./DropDownFilter";
 
 const CountrySelector = ({
                              countries,
@@ -13,33 +14,13 @@ const CountrySelector = ({
                              intl,
                              isShowSelector,
                              selectedCountryPostLabel,
-                             setIsFilterOpen
+                             setIsFilterOpen,
+                             isAddIndicatorFilter,
+                             categoriesWP
+
                          }) => {
-    const [activeIndex, setActiveIndex] = useState([0]);
-    const [searchKeyword, setSearchKeyword] = useState(undefined);
-    const ref = useRef(null);
-    useEffect(() => {
-        const hoverOutside = (event) => {
-            if (ref.current && !ref.current.contains(event.target)) {
-                setActiveIndex(-1);
-                if (setIsFilterOpen) {
-                    setIsFilterOpen(false);
-                }
-            }
-        };
-        document.addEventListener('mouseout', hoverOutside, true);
-        return () => {
-            document.removeEventListener('mouseout', hoverOutside, true);
-        };
-    }, []);
-    const handleSelectedCountry = (event, { value }) => {
-        setActiveIndex(undefined);
-        setSearchKeyword(undefined);
-        if (setIsFilterOpen) {
-            setIsFilterOpen(false);
-        }
-        onApply(SELECTED_COUNTRY, value);
-    }
+    const indicatorColumns = countryColumns;
+
     const getSelectedCountry = () => {
         if (filters && filters.get(SELECTED_COUNTRY)) {
             if (countries) {
@@ -49,92 +30,59 @@ const CountrySelector = ({
         }
     }
 
-    const handleSearch = (event, { value }) => {
-        setSearchKeyword(value);
-    }
-    const generateCountries = () => {
-        return countries && countries.filter(c => {
-            if (searchKeyword) {
-                let ret = true;
-                const searchArray = searchKeyword.toLowerCase().trim().split(' ').filter(i => i !== '');
-                searchArray.forEach(i => {
-                    if (!c.country.toLowerCase().includes(i) && !c.year.toString().includes(i)) {
-                        ret = false;
-                    }
-                });
-                return ret;
-            }
-            return true;
-        }).map(c => {
-            const checked = filters && c.countryId === filters.get(SELECTED_COUNTRY);
-            return <Grid.Column key={c.countryId}><Form.Radio
-                key={c.countryId}
-                checked={checked}
-                className={`${checked ? 'checked' : ''}`}
-                label={`${c.country}${addYear ? ' ' + c.year : ''}`} name='size' type='radio' value={c.countryId}
-                onClick={handleSelectedCountry}
-            /></Grid.Column>;
-        });
-    }
-
-    const CountryForm = (
-        <Form>
-            <Form.Group grouped>
-                <Input key="search_input" type="text" icon='search' iconPosition='left'
-                       placeholder="Search..." onChange={handleSearch}
-                       value={searchKeyword}
-                />
-                <Icon.Group>
-                    <Icon name='circle outline' />
-                    <Icon name='delete' size='tiny' link onClick={() => setSearchKeyword('')} />
-                </Icon.Group>
-            </Form.Group>
-            <Grid columns={countryColumns}>
-                {generateCountries()}
-            </Grid>
-        </Form>
-    )
-    const handleClick = (e, titleProps) => {
-        const { index } = titleProps
-        setActiveIndex(activeIndex === index ? -1 : index);
-        if (setIsFilterOpen) {
-            setIsFilterOpen(true);
-        }
-    }
     const getSelectedCountryGrids = () => {
         const grids = [];
-        if (isShowSelector) {
-            grids.push(<Grid.Column width={selectedCountryFirst ? 8 : 10} key={1}>
-                <Accordion as={Menu} vertical className={!selectedCountryFirst ? 'narrow' : ''}>
-                    <Menu.Item>
-                        <Accordion.Title
-                            active={activeIndex === 0}
-                            content='Select another country'
-                            icon="angle right"
-                            index={0}
-                            onClick={handleClick}
-                        />
-                        <Accordion.Content active={activeIndex === 0} content={CountryForm}/>
-                    </Menu.Item>
-                </Accordion>
-            </Grid.Column>);
+        const divider = isAddIndicatorFilter ? 2 : 1;
+        if (isAddIndicatorFilter && categoriesWP) {
+            const indicators = categoriesWP.filter(cwp => cwp.parent === 162);
+            grids.push(<DropDownFilter
+                selectedCountryFirst={selectedCountryFirst}
+                filterTitle={'Select Indicator'}
+                divider={divider}
+                divId={'indicator'}
+                columnCount={1}
+                options={indicators} filters={filters}
+                addYear={false}
+                selectedFilter={SELECTED_INDICATOR}
+                onApply={onApply}
+            />);
         }
-        grids.push(
-            <Grid.Column key={2} width={selectedCountryFirst ? 8 : 6}
-                         className="selected-country">{selectedCountryLabel &&
-                <span>{selectedCountryLabel}</span>}{getSelectedCountry()}{selectedCountryPostLabel &&
-                <span>{selectedCountryPostLabel}</span>}</Grid.Column>)
-
+        if (isShowSelector && countries) {
+            const newCountries = countries.map(c => {
+                return {
+                    id: c.countryId,
+                    name: c.country,
+                    year: c.year
+                }
+            });
+            grids.push(<DropDownFilter
+                selectedCountryFirst={selectedCountryFirst}
+                filterTitle={'Select another country'}
+                divider={divider} setIsFilterOpen={setIsFilterOpen}
+                divId={'country'}
+                columnCount={countryColumns}
+                addYear={addYear}
+                options={newCountries}
+                selectedFilter={SELECTED_COUNTRY}
+                onApply={onApply}
+            />);
+        }
+        const selectedColumn = <Grid.Column key={2} width={selectedCountryFirst ? 8 : 6}
+                                            className="selected-country">{selectedCountryLabel &&
+            <span>{selectedCountryLabel}</span>}{getSelectedCountry()}{selectedCountryPostLabel &&
+            <span>{selectedCountryPostLabel}</span>}</Grid.Column>;
         if (selectedCountryFirst) {
-            return grids.reverse();
+            grids.unshift(selectedColumn)
         } else {
-            return grids;
+            grids.push(selectedColumn)
         }
+        return grids;
     }
-    return (<div ref={ref}><Grid className={"select-country-grid"}>
-        {getSelectedCountryGrids()}
-
-    </Grid></div>);
+    return (
+        <div><Grid className={"select-country-grid"}>
+            {getSelectedCountryGrids()}
+        </Grid></div>
+    );
 }
 
 export default CountrySelector;
