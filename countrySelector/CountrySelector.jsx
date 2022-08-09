@@ -1,8 +1,9 @@
-import { Accordion, Form, Grid, Icon, Input, Menu } from "semantic-ui-react";
-import React, { useEffect, useRef, useState } from "react";
+import { Grid} from "semantic-ui-react";
+import React from "react";
 import { SELECTED_COUNTRY, SELECTED_INDICATOR } from "../commonConstants";
 import DropDownFilter from "./DropDownFilter";
 
+const INDICATOR_SLUG = 'indicators';
 const CountrySelector = ({
                              countries,
                              filters,
@@ -11,7 +12,6 @@ const CountrySelector = ({
                              addYear,
                              selectedCountryLabel,
                              countryColumns,
-                             intl,
                              isShowSelector,
                              selectedCountryPostLabel,
                              setIsFilterOpen,
@@ -19,7 +19,6 @@ const CountrySelector = ({
                              categoriesWP
 
                          }) => {
-    const indicatorColumns = countryColumns;
 
     const getSelectedCountry = () => {
         if (filters && filters.get(SELECTED_COUNTRY)) {
@@ -34,7 +33,9 @@ const CountrySelector = ({
         const grids = [];
         const divider = isAddIndicatorFilter ? 2 : 1;
         if (isAddIndicatorFilter && categoriesWP) {
-            const indicators = categoriesWP.filter(cwp => cwp.parent === 162);
+            const categoryIndicator = categoriesWP.find(c => c.slug === INDICATOR_SLUG);
+            const indicatorCategoryId = categoryIndicator ? categoryIndicator.id : -1;
+            const indicators = categoriesWP.filter(cwp => cwp.parent === indicatorCategoryId);
             grids.push(<DropDownFilter
                 selectedCountryFirst={selectedCountryFirst}
                 filterTitle={'Select Indicator'}
