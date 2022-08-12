@@ -1,6 +1,9 @@
 import { Accordion, Form, Grid, Icon, Input, Menu } from "semantic-ui-react";
 import React, { useEffect, useRef, useState } from "react";
 import { SELECTED_COUNTRY } from "../commonConstants";
+import { WP_CATEGORIES } from "../../embeddable/reducers/StoreConstants";
+import { getCrops, getDocuments, getIndicatorsInformation, getWpCategories } from "../../embeddable/reducers/data";
+import { connect } from "react-redux";
 
 const DropDownFilter = ({
                             selectedCountryFirst,
@@ -8,11 +11,12 @@ const DropDownFilter = ({
                             divider,
                             setIsFilterOpen
                             , divId, columnCount,
-                            options, filters, addYear, selectedFilter, onApply
+                            options, filters, addYear, selectedFilter, onApply,
+                            activeIndex, setActiveIndex
                         }) => {
     const ref = useRef(null);
     const [searchKeyword, setSearchKeyword] = useState(undefined);
-    const [activeIndex, setActiveIndex] = useState([0]);
+
     useEffect(() => {
         const hoverOutside = (event) => {
             if (ref.current && !ref.current.contains(event.target)) {
@@ -37,6 +41,8 @@ const DropDownFilter = ({
             setIsFilterOpen(false);
         }
         onApply(selectedFilter, value);
+        const customEvent = new CustomEvent('dropDownValueSelected', { detail: { divId } });
+        document.dispatchEvent(customEvent);
     }
     const generateOptions = () => {
         return options && options.filter(c => {

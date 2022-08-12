@@ -1,5 +1,5 @@
-import { Grid} from "semantic-ui-react";
-import React from "react";
+import { Grid } from "semantic-ui-react";
+import React, { useEffect, useState } from "react";
 import { SELECTED_COUNTRY, SELECTED_INDICATOR } from "../commonConstants";
 import DropDownFilter from "./DropDownFilter";
 
@@ -19,17 +19,44 @@ const CountrySelector = ({
                              categoriesWP
 
                          }) => {
+    const [activeCountryIndex, setActiveCountryIndex] = useState([0]);
+    const [activeIndicatorIndex, setActiveIndicatorIndex] = useState([0]);
+    useEffect(() => {
+        const dropDownValueSelected = ({ detail }) => {
+            const { divId } = detail;
+            //if isAddIndicatorFilter then means that only one filter value can be selected at a
+            //certain moment
+            if (isAddIndicatorFilter && isShowSelector) {
+                if (divId === 'country') {
+                    setActiveIndicatorIndex(undefined);
+                    onApply(SELECTED_INDICATOR, 0);
+                } else if (divId === 'indicator') {
+                    setActiveCountryIndex(undefined);
+                    onApply(SELECTED_COUNTRY, 0);
+                }
 
-    const getSelectedCountry = () => {
-        if (filters && filters.get(SELECTED_COUNTRY)) {
+            }
+        };
+        document.addEventListener('dropDownValueSelected', dropDownValueSelected, true);
+        return () => {
+            document.removeEventListener('dropDownValueSelected', dropDownValueSelected, true);
+        };
+    }, []);
+    const getSelectedOption = () => {
+        if (filters && filters.get(SELECTED_COUNTRY) && filters.get(SELECTED_COUNTRY) !== 0) {
             if (countries) {
                 const selectedCountry = countries.find(c => c.countryId === filters.get(SELECTED_COUNTRY));
                 return `${selectedCountry.country} ${addYear ? ' ' + selectedCountry.year : ''}`;
             }
+        } else if (filters && filters.get(SELECTED_INDICATOR) && filters.get(SELECTED_INDICATOR) !== 0) {
+            if (categoriesWP) {
+                const selectedIndicator = categoriesWP.find(c => c.id === filters.get(SELECTED_INDICATOR));
+                return selectedIndicator.name;
+            }
         }
     }
 
-    const getSelectedCountryGrids = () => {
+    const getSelectedOptionsGrids = () => {
         const grids = [];
         const divider = isAddIndicatorFilter ? 2 : 1;
         if (isAddIndicatorFilter && categoriesWP) {
@@ -46,6 +73,7 @@ const CountrySelector = ({
                 addYear={false}
                 selectedFilter={SELECTED_INDICATOR}
                 onApply={onApply}
+                activeIndex={activeIndicatorIndex} setActiveIndex={setActiveIndicatorIndex}
             />);
         }
         if (isShowSelector && countries) {
@@ -66,11 +94,13 @@ const CountrySelector = ({
                 options={newCountries}
                 selectedFilter={SELECTED_COUNTRY}
                 onApply={onApply}
+                activeIndex={activeCountryIndex} setActiveIndex={setActiveCountryIndex}
+                filters={filters}
             />);
         }
         const selectedColumn = <Grid.Column key={2} width={selectedCountryFirst ? 8 : 6}
                                             className="selected-country">{selectedCountryLabel &&
-            <span>{selectedCountryLabel}</span>}{getSelectedCountry()}{selectedCountryPostLabel &&
+            <span>{selectedCountryLabel}</span>}{getSelectedOption()}{selectedCountryPostLabel &&
             <span>{selectedCountryPostLabel}</span>}</Grid.Column>;
         if (selectedCountryFirst) {
             grids.unshift(selectedColumn)
@@ -81,7 +111,7 @@ const CountrySelector = ({
     }
     return (
         <div><Grid className={"select-country-grid"}>
-            {getSelectedCountryGrids()}
+            {getSelectedOptionsGrids()}
         </Grid></div>
     );
 }
