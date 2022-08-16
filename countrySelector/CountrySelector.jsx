@@ -1,5 +1,5 @@
 import { Grid } from "semantic-ui-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SELECTED_COUNTRY, SELECTED_INDICATOR } from "../commonConstants";
 import DropDownFilter from "./DropDownFilter";
 
@@ -21,7 +21,10 @@ const CountrySelector = ({
                          }) => {
     const [activeCountryIndex, setActiveCountryIndex] = useState([0]);
     const [activeIndicatorIndex, setActiveIndicatorIndex] = useState([0]);
+    const refCountry = useRef(null);
+    const refIndicator = useRef(null);
     useEffect(() => {
+
         const dropDownValueSelected = ({ detail }) => {
             const { divId } = detail;
             //if isAddIndicatorFilter then means that only one filter value can be selected at a
@@ -37,9 +40,23 @@ const CountrySelector = ({
 
             }
         };
+        const hoverOutside = (event) => {
+            if (refCountry && refCountry.current && !refCountry.current.contains(event.target)) {
+                setActiveCountryIndex(undefined);
+                if (setIsFilterOpen) {
+                    setIsFilterOpen(false);
+                }
+            } else {
+                if (refIndicator && refIndicator.current && !refIndicator.current.contains(event.target)) {
+                    setActiveIndicatorIndex(undefined);
+                }
+            }
+        }
         document.addEventListener('dropDownValueSelected', dropDownValueSelected, true);
+        document.addEventListener('mouseout', hoverOutside, true);
         return () => {
             document.removeEventListener('dropDownValueSelected', dropDownValueSelected, true);
+            document.removeEventListener('mouseout', hoverOutside, true);
         };
     }, []);
     const getSelectedOption = () => {
@@ -63,7 +80,7 @@ const CountrySelector = ({
             const categoryIndicator = categoriesWP.find(c => c.slug === INDICATOR_SLUG);
             const indicatorCategoryId = categoryIndicator ? categoryIndicator.id : -1;
             const indicators = categoriesWP.filter(cwp => cwp.parent === indicatorCategoryId);
-            grids.push(<DropDownFilter
+            grids.push(<div id={'indicator'} ref={refIndicator}><DropDownFilter
                 selectedCountryFirst={selectedCountryFirst}
                 filterTitle={'Select Indicator'}
                 divider={divider}
@@ -74,7 +91,7 @@ const CountrySelector = ({
                 selectedFilter={SELECTED_INDICATOR}
                 onApply={onApply}
                 activeIndex={activeIndicatorIndex} setActiveIndex={setActiveIndicatorIndex}
-            />);
+            /></div>);
         }
         if (isShowSelector && countries) {
             const newCountries = countries.map(c => {
@@ -84,7 +101,7 @@ const CountrySelector = ({
                     year: c.year
                 }
             });
-            grids.push(<DropDownFilter
+            grids.push(<div id={'country'} ref={refCountry}><DropDownFilter
                 selectedCountryFirst={selectedCountryFirst}
                 filterTitle={'Select another country'}
                 divider={divider} setIsFilterOpen={setIsFilterOpen}
@@ -96,7 +113,7 @@ const CountrySelector = ({
                 onApply={onApply}
                 activeIndex={activeCountryIndex} setActiveIndex={setActiveCountryIndex}
                 filters={filters}
-            />);
+            /></div>);
         }
         const selectedColumn = <Grid.Column key={2} width={selectedCountryFirst ? 8 : 6}
                                             className="selected-country">{selectedCountryLabel &&

@@ -14,23 +14,8 @@ const DropDownFilter = ({
                             options, filters, addYear, selectedFilter, onApply,
                             activeIndex, setActiveIndex
                         }) => {
-    const ref = useRef(null);
     const [searchKeyword, setSearchKeyword] = useState(undefined);
 
-    useEffect(() => {
-        const hoverOutside = (event) => {
-            if (ref.current && !ref.current.contains(event.target)) {
-                setActiveIndex(-1);
-                if (setIsFilterOpen) {
-                    setIsFilterOpen(false);
-                }
-            }
-        };
-        document.addEventListener('mouseout', hoverOutside, true);
-        return () => {
-            document.removeEventListener('mouseout', hoverOutside, true);
-        };
-    }, []);
     const handleSearch = (event, { value }) => {
         setSearchKeyword(value);
     }
@@ -93,7 +78,7 @@ const DropDownFilter = ({
         }
     }
     return (
-        <div ref={ref} id={divId}><Grid.Column width={selectedCountryFirst ? 8 / divider : 10} key={1}>
+        <Grid.Column width={selectedCountryFirst ? 8 / divider : 10} key={1}>
             <Accordion as={Menu} vertical className={!selectedCountryFirst ? 'narrow' : ''}>
                 <Menu.Item>
                     <Accordion.Title
@@ -106,7 +91,7 @@ const DropDownFilter = ({
                     <Accordion.Content active={activeIndex === 0} content={FilterForm} />
                 </Menu.Item>
             </Accordion>
-        </Grid.Column></div>)
+        </Grid.Column>)
 
 }
 export default DropDownFilter;
