@@ -115,7 +115,7 @@ const CountrySelector = ({
                 filters={filters}
             /></div>);
         }
-        const selectedColumn = <Grid.Column key={2} width={selectedCountryFirst ? 8 : 6}
+        const selectedColumn = <Grid.Column key={2} width={selectedCountryFirst ? 8 : 8}
                                             className="selected-country">{selectedCountryLabel &&
             <span>{selectedCountryLabel}</span>}{getSelectedOption()}{selectedCountryPostLabel &&
             <span>{selectedCountryPostLabel}</span>}</Grid.Column>;
