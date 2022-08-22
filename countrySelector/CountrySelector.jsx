@@ -16,7 +16,7 @@ const CountrySelector = ({
                              selectedCountryPostLabel,
                              setIsFilterOpen,
                              isAddIndicatorFilter,
-                             categoriesWP
+                             categoriesWP, intl
 
                          }) => {
     const [activeCountryIndex, setActiveCountryIndex] = useState([0]);
@@ -82,7 +82,10 @@ const CountrySelector = ({
             const indicators = categoriesWP.filter(cwp => cwp.parent === indicatorCategoryId);
             grids.push(<div id={'indicator'} ref={refIndicator}><DropDownFilter
                 selectedCountryFirst={selectedCountryFirst}
-                filterTitle={'Select Indicator'}
+                filterTitle={intl.formatMessage({
+                    id: 'select-topic',
+                    defaultMessage: 'Select topic'
+                })}
                 divider={divider}
                 divId={'indicator'}
                 columnCount={1}
@@ -103,7 +106,10 @@ const CountrySelector = ({
             });
             grids.push(<div id={'country'} ref={refCountry}><DropDownFilter
                 selectedCountryFirst={selectedCountryFirst}
-                filterTitle={'Select another country'}
+                filterTitle={intl.formatMessage({
+                    id: 'select-country',
+                    defaultMessage: 'Select country'
+                })}
                 divider={divider} setIsFilterOpen={setIsFilterOpen}
                 divId={'country'}
                 columnCount={countryColumns}
