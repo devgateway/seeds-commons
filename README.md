@@ -2,7 +2,7 @@
 
 When configuring your new app / repo, you can select one directory that you want to configure to get content from a submodule.
 
-For this guide, we'll use /src/seeds-commons
+For this guide, we'll use /src/seeds-commons/
 
 In this example, we'll be using two repos. One [seeds-dashboard](https://github.com/devgateway/seeds-dashboard.git) and one [seeds-commons](https://github.com/devgateway/seeds-commons.git)
 
