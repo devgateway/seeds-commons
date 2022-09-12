@@ -4,6 +4,7 @@ import { SELECTED_COUNTRY } from "../commonConstants";
 import { WP_CATEGORIES } from "../../embeddable/reducers/StoreConstants";
 import { getCrops, getDocuments, getIndicatorsInformation, getWpCategories } from "../../embeddable/reducers/data";
 import { connect } from "react-redux";
+import { injectIntl } from "react-intl";
 
 const DropDownFilter = ({
                             selectedCountryFirst,
@@ -12,7 +13,7 @@ const DropDownFilter = ({
                             setIsFilterOpen
                             , divId, columnCount,
                             options, filters, addYear, selectedFilter, onApply,
-                            activeIndex, setActiveIndex
+                            activeIndex, setActiveIndex, intl
                         }) => {
     const [searchKeyword, setSearchKeyword] = useState(undefined);
 
@@ -57,7 +58,8 @@ const DropDownFilter = ({
         <Form>
             <Form.Group grouped>
                 <Input key="search_input" type="text" icon='search' iconPosition='left'
-                       placeholder="Search..." onChange={handleSearch}
+                       placeholder={`${intl.formatMessage({ id: "search", defaultMessage: "Search" })} ...`}
+                       onChange={handleSearch}
                        value={searchKeyword}
                 />
                 <Icon.Group>
@@ -94,4 +96,4 @@ const DropDownFilter = ({
         </Grid.Column>)
 
 }
-export default DropDownFilter;
+export default injectIntl(DropDownFilter);
