@@ -63,7 +63,10 @@ const CountrySelector = ({
         if (filters && filters.get(SELECTED_COUNTRY) && filters.get(SELECTED_COUNTRY) !== 0) {
             if (countries) {
                 const selectedCountry = countries.find(c => c.countryId === filters.get(SELECTED_COUNTRY));
-                return `${selectedCountry.country} ${addYear ? ' ' + selectedCountry.year : ''}`;
+                if (selectedCountry) {
+                    const labelSelectedCountry = selectedCountry.translatedLabel ? selectedCountry.translatedLabel : selectedCountry.country;
+                    return `${labelSelectedCountry} ${addYear ? ' ' + selectedCountry.year : ''}`;
+                }
             }
         } else if (filters && filters.get(SELECTED_INDICATOR) && filters.get(SELECTED_INDICATOR) !== 0) {
             if (categoriesWP) {
@@ -100,7 +103,7 @@ const CountrySelector = ({
             const newCountries = countries.map(c => {
                 return {
                     id: c.countryId,
-                    name: c.country,
+                    name: c.translatedLabel ? c.translatedLabel : c.country,
                     year: c.year
                 }
             });
