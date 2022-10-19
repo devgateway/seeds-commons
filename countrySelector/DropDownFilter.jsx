@@ -96,4 +96,4 @@ const DropDownFilter = ({
         </Grid.Column>)
 
 }
-export default injectIntl(DropDownFilter);
+export default  injectIntl(DropDownFilter);
