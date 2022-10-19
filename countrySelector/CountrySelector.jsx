@@ -106,7 +106,7 @@ const CountrySelector = ({
                     name: c.translatedLabel ? c.translatedLabel : c.country,
                     year: c.year
                 }
-            }) .sort((a, b) => a.name.localeCompare(b.name));
+            });
 
             grids.push(<div id={'country'} ref={refCountry}><DropDownFilter
                 selectedCountryFirst={selectedCountryFirst}
