@@ -82,7 +82,7 @@ const CountrySelector = ({
         if (isAddIndicatorFilter && categoriesWP) {
             const categoryIndicator = categoriesWP.find(c => c.slug === INDICATOR_SLUG);
             const indicatorCategoryId = categoryIndicator ? categoryIndicator.id : -1;
-            const indicators = categoriesWP.filter(cwp => cwp.parent === indicatorCategoryId);
+            const indicators = categoriesWP.filter(cwp => cwp.parent === indicatorCategoryId).sort((a, b) => a.name.localeCompare(b.name));
             grids.push(<div id={'indicator'} ref={refIndicator}><DropDownFilter
                 selectedCountryFirst={selectedCountryFirst}
                 filterTitle={intl.formatMessage({
